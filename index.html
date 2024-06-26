@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Todo App Advance</title>
+  </head>
+  <body>
+    <form id="submit">
+      <input type="text" name="todo-title-input" id="todo-id" />
+      <input type="submit" value="submit" />
+    </form>
+    <ul></ul>
+    <script>
+      const titleInput = document.getElementById("todo-id");
+      const submit = document.getElementById("submit");
+      const ul = document.getElementsByTagName("ul")[0];
+      const store = {
+        todos: [
+          {
+            id: "1",
+            title: "todo-title",
+            completed: false,
+          },
+        ],
+      };
+
+      const render = () => {
+        const allTodos = store.todos
+          .map((todo) => {
+            return `
+            
+        <li class='todo' data-id=${todo.id}>
+            <span class='${todo.completed ? "done" : ""}' >${todo.title}</span>
+            <button type="button">X</button>
+        </li>
+            
+            
+            `;
+          })
+          .join("");
+        ul.innerHTML = allTodos;
+      };
+      const storage = JSON.parse(localStorage.getItem("storeu"));
+      if (storage?.todos.length > 0) {
+        store.todos = storage.todos;
+        console.log("if local have data", storage.todos);
+        render();
+      }
+
+      submit.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const inputVal = titleInput.value;
+        const newTitle = {
+          id: crypto.randomUUID(),
+          title: inputVal,
+          completed: false,
+        };
+        store.todos = [...store.todos, newTitle];
+        localStorage.setItem("storeu", JSON.stringify(store));
+        console.log(store.todos);
+        render();
+        titleInput.value = "";
+      });
+
+      ul.addEventListener("click", (e) => {
+        const t = e.target;
+        if (t.type === "button") {
+          const id = t.closest(".todo").dataset.id;
+          console.log(id);
+          store.todos = store.todos.filter((t) => t.id !== id);
+          localStorage.setItem("storeu", JSON.stringify(store));
+          console.log(store.todos);
+          render();
+        }
+      });
+    </script>
+  </body>
+</html>
